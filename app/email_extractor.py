@@ -46,4 +46,4 @@ class EmailExtractor:
             }
         except Exception as e:
             logging.error(f"Erro ao extrair informações do e-mail: {e}")
-            return None
+            raise e

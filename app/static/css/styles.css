@@ -7,30 +7,33 @@ body {
     color: #24292e;
     background-color: #fff;
 }
+
 .container {
-    max-width: 960px;
+    max-width: 50%;
+    min-width: 30%;
     margin: 0 auto;
-    padding: 50px;
+    padding: 40px;
     background: rgba(255, 255, 255, 0.7);
     box-shadow: 0px 4px 24px rgba(5, 12, 22, 0.2);
     border-radius: 24px;
 }
 
 h1 {
-    font-size: 24px;
+    font-size: 30px;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 35px;
+    margin-top: 15px;
 }
-form {
-    margin-bottom: 20px;
-}
+
 label {
     display: block;
     margin-bottom: 5px;
     font-weight: 600;
 }
+
 input[type="email"] {
-    width: 300px;
+    max-width: -webkit-fill-available; /* Alterado para 100% para ocupar toda a largura disponível */
+    width: 100%; /* Adicionado para garantir que o campo ocupe toda a largura */
     padding: 6px 12px;
     font-size: 14px;
     line-height: 20px;
@@ -43,9 +46,12 @@ input[type="email"] {
     border-radius: 6px;
     outline: none;
     box-shadow: inset 0 1px 0 rgba(225, 228, 232, 0.2);
+    margin-bottom: 15px;
 }
+
 button {
     display: inline-block;
+    width: 100%;
     padding: 6px 12px;
     font-size: 14px;
     font-weight: 600;
@@ -57,30 +63,46 @@ button {
     border-radius: 6px;
     background-color: #28a745;
     color: #fff;
+    transition: background-color 0.3s ease;
+    margin-bottom: 15px;
 }
+
 button:hover {
     background-color: #269f42;
-    border-color: rgba(27, 31, 35, 0.15);
 }
+
+button:active {
+    background-color: #1e7e34;
+}
+
 .message {
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 6px;
 }
+
 .success {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
 }
+
 .loading {
     background-color: #fff3cd;
     color: #856404;
     border: 1px solid #ffeeba;
 }
+
+.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
 .button-container {
-    display: flex;
     gap: 10px;
 }
+
 footer {
     position: fixed;
     bottom: 0;
@@ -94,4 +116,14 @@ footer {
 footer img {
     max-width: 200px;
     height: auto;
+}
+
+@media screen and (max-width: 600px) {
+    footer {
+        padding: 10px;
+    }
+    
+    footer img {
+        max-width: 150px;
+    }
 }

@@ -23,6 +23,12 @@ class AttachmentExtractor:
                         return payload.decode('utf-8', errors='ignore')
             else:
                 return msg.get_payload(decode=True).decode('utf-8', errors='ignore')
+        except AttributeError as e:
+            logging.error(f"Erro ao extrair texto do anexo (AttributeError): {e}")
+            return None
+        except LookupError as e:
+            logging.error(f"Erro ao extrair texto do anexo (LookupError): {e}")
+            return None
         except Exception as e:
             logging.error(f"Erro ao extrair texto do anexo: {e}")
             return None
@@ -65,6 +71,12 @@ class AttachmentExtractor:
                 localizador = match.group(1)
 
             return tarifa_total, taxas, localizador, origem, destino, passageiros
+        except AttributeError as e:
+            logging.error(f"Erro ao extrair valores do anexo (AttributeError): {e}")
+            return None, None, None, None, None, None
+        except TypeError as e:
+            logging.error(f"Erro ao extrair valores do anexo (TypeError): {e}")
+            return None, None, None, None, None, None
         except Exception as e:
             logging.error(f"Erro ao extrair valores do anexo: {e}")
             return None, None, None, None, None, None
