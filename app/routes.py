@@ -7,6 +7,7 @@ from config import USUARIO, SENHA
 from imap_tools import MailBox, AND
 from io import BytesIO
 import logging
+import re
 
 @app.route('/', methods=['GET'])
 def index():
@@ -15,11 +16,15 @@ def index():
 @app.route('/extract', methods=['POST'])
 def extract_data():
     email = request.form['email']
+
+    if not is_valid_email(email):
+        return {"error": "Por favor, insira um e-mail válido."}, 400
+
     try:
         # Faça login na caixa de correio
         with MailBox('imap.gmail.com').login(USUARIO, SENHA) as mailbox:
             # Busque e-mails do remetente especificado
-            emails = mailbox.fetch(AND(from_=email, text="email@news-voeazul.com.br"))
+            emails = mailbox.fetch(AND(from_=email, text="email@news-voeazul.com.br"), limit=100)
 
             extracted_data = []
 
@@ -46,8 +51,12 @@ def extract_data():
                 excel_file.seek(0)
                 return send_file(excel_file, download_name='dados_extraidos.xlsx', as_attachment=True)
             else:
-                return "Nenhum dado encontrado para exportar."
+                return {"error": "Nenhum dado encontrado para exportar."}, 404
 
     except Exception as e:
         logging.error(f"Erro ao fazer login ou buscar e-mails: {e}")
-        return "Ocorreu um erro ao processar a solicitação. Por favor, tente novamente mais tarde."
+        return {"error": "Ocorreu um erro ao processar a solicitação. Por favor, tente novamente mais tarde."}, 500
+
+def is_valid_email(email):
+    email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+    return re.match(email_regex, email)

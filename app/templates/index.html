@@ -1,26 +1,29 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="pt-BR">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Extração de Dados</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Extração de emissões por e-mail</h1>
+        <h1>Emissões por e-mail</h1>
         <form id="extractForm">
             <div class="input-group">
                 <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required>
-                <button type="submit">Extrair dados</button>
+                <button id="searchButton" type="submit">Extrair dados</button>
             </div>
         </form>
         <div id="loadingMessage" class="message loading" style="display: none;">Gerando planilha, por favor aguarde...</div>
         <div id="successMessage" class="message success" style="display: none;">Planilha gerada com sucesso!</div>
-        <div class="button-container" style="display: none;">
-            <a id="downloadLink" download="dados_extraidos.xlsx">
-                <button class="download-btn">Baixar Planilha</button>
+        <div id="errorMessage" class="message error" style="display: none;"></div>
+        <div class="button-container">
+            <a id="downloadLink" href="#" download="dados_extraidos.xlsx">
+                <button id="download-btn" class="download-btn" style="display: none;">Baixar Planilha</button>
             </a>
-            <button id="newSearchButton" class="new-search-btn">Nova Pesquisa</button>
+            <button id="newSearchButton" class="new-search-btn" style="display: none;">Nova Pesquisa</button>
         </div>
     </div>
     <footer>
