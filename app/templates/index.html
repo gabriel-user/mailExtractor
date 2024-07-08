@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title>Extração de Dados</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Extração de emissões por e-mail</h1>
+        <form id="extractForm">
+            <div class="input-group">
+                <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required>
+                <button type="submit">Extrair dados</button>
+            </div>
+        </form>
+        <div id="loadingMessage" class="message loading" style="display: none;">Gerando planilha, por favor aguarde...</div>
+        <div id="successMessage" class="message success" style="display: none;">Planilha gerada com sucesso!</div>
+        <div class="button-container" style="display: none;">
+            <a id="downloadLink" download="dados_extraidos.xlsx">
+                <button class="download-btn">Baixar Planilha</button>
+            </a>
+            <button id="newSearchButton" class="new-search-btn">Nova Pesquisa</button>
+        </div>
+    </div>
+    <footer>
+        <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Logo da empresa">
+    </footer>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
