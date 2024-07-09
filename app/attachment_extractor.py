@@ -1,13 +1,19 @@
-from email import policy, parser
-from bs4 import BeautifulSoup
+"""Módulo para extrair informações de um anexo de e-mail."""
+
 import re
 import logging
+from email import policy, parser
+from bs4 import BeautifulSoup
+
 
 class AttachmentExtractor:
+    """Classe para extrair informações de um anexo de e-mail."""
+
     def __init__(self, attachment):
         self.attachment = attachment
 
     def extract_text_from_eml(self):
+        """Extrai o texto do anexo de e-mail."""
         try:
             msg = parser.BytesParser(policy=policy.default).parsebytes(self.attachment)
 
@@ -23,17 +29,18 @@ class AttachmentExtractor:
                         return payload.decode('utf-8', errors='ignore')
             else:
                 return msg.get_payload(decode=True).decode('utf-8', errors='ignore')
-        except AttributeError as e:
-            logging.error(f"Erro ao extrair texto do anexo (AttributeError): {e}")
+        except AttributeError as error:
+            logging.error(f"Erro ao extrair texto do anexo (AttributeError): {error}")
             return None
-        except LookupError as e:
-            logging.error(f"Erro ao extrair texto do anexo (LookupError): {e}")
+        except LookupError as error:
+            logging.error(f"Erro ao extrair texto do anexo (LookupError): {error}")
             return None
-        except Exception as e:
-            logging.error(f"Erro ao extrair texto do anexo: {e}")
+        except Exception as error:
+            logging.error(f"Erro ao extrair texto do anexo: {error}")
             return None
 
     def extract_values(self, html):
+        """Extrai os valores do HTML do anexo."""
         try:
             soup = BeautifulSoup(html, 'html.parser')
 
@@ -71,17 +78,18 @@ class AttachmentExtractor:
                 localizador = match.group(1)
 
             return tarifa_total, taxas, localizador, origem, destino, passageiros
-        except AttributeError as e:
-            logging.error(f"Erro ao extrair valores do anexo (AttributeError): {e}")
+        except AttributeError as error:
+            logging.error(f"Erro ao extrair valores do anexo (AttributeError): {error}")
             return None, None, None, None, None, None
-        except TypeError as e:
-            logging.error(f"Erro ao extrair valores do anexo (TypeError): {e}")
+        except TypeError as error:
+            logging.error(f"Erro ao extrair valores do anexo (TypeError): {error}")
             return None, None, None, None, None, None
-        except Exception as e:
-            logging.error(f"Erro ao extrair valores do anexo: {e}")
+        except Exception as error:
+            logging.error(f"Erro ao extrair valores do anexo: {error}")
             return None, None, None, None, None, None
 
     def extract_info_from_attachment(self):
+        """Extrai as informações do anexo de e-mail."""
         attachment_text = self.extract_text_from_eml()
         if attachment_text:
             tarifa_total, taxas, localizador, origem, destino, passageiros = self.extract_values(attachment_text)

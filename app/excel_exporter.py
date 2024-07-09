@@ -1,12 +1,16 @@
+import logging
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
-import logging
+
 
 class ExcelExporter:
+    """Classe para exportar dados para o Excel."""
+
     def __init__(self, data):
         self.data = data
 
     def export_to_excel(self, output):
+        """Exporta os dados para um arquivo Excel."""
         try:
             workbook = Workbook()
             sheet = workbook.active
@@ -24,7 +28,14 @@ class ExcelExporter:
 
             # Escrever os dados nas linhas subsequentes
             for item in self.data:
-                row = [item['Localizador'], item['Origem'], item['Destino'], item['Passageiros'], item['Milhas'], item['Taxas']]
+                row = [
+                    item['Localizador'],
+                    item['Origem'],
+                    item['Destino'],
+                    item['Passageiros'],
+                    item['Milhas'],
+                    item['Taxas']
+                ]
                 sheet.append(row)
 
             # Aplicar formatação condicional às células
@@ -41,12 +52,12 @@ class ExcelExporter:
                     try:
                         if len(str(cell.value)) > max_length:
                             max_length = len(cell.value)
-                    except:
+                    except TypeError:
                         pass
                 adjusted_width = (max_length + 2) * 1.2
                 sheet.column_dimensions[column_letter].width = adjusted_width
 
             workbook.save(output)
-        except Exception as e:
-            logging.error(f"Erro ao exportar dados para o Excel: {e}")
-            raise e
+        except Exception as error:
+            logging.error(f"Erro ao exportar dados para o Excel: {error}")
+            raise

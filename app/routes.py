@@ -1,20 +1,27 @@
+import logging
+import re
+from io import BytesIO
+
 from flask import render_template, request, send_file
+from imap_tools import MailBox, AND
+
 from app import app
 from app.email_extractor import EmailExtractor
 from app.attachment_extractor import AttachmentExtractor
 from app.excel_exporter import ExcelExporter
-from config import USUARIO, SENHA
-from imap_tools import MailBox, AND
-from io import BytesIO
-import logging
-import re
+USUARIO = 'conciliacaoncm@maxmilhas.com.br'
+SENHA = "vhlm elbm fugg mddy"
+
 
 @app.route('/', methods=['GET'])
 def index():
+    """Rota principal da aplicação."""
     return render_template('index.html')
+
 
 @app.route('/extract', methods=['POST'])
 def extract_data():
+    """Rota para extrair dados de e-mails."""
     email = request.form['email']
 
     if not is_valid_email(email):
@@ -53,10 +60,14 @@ def extract_data():
             else:
                 return {"error": "Nenhum dado encontrado para exportar."}, 404
 
-    except Exception as e:
-        logging.error(f"Erro ao fazer login ou buscar e-mails: {e}")
-        return {"error": "Ocorreu um erro ao processar a solicitação. Por favor, tente novamente mais tarde."}, 500
+    except Exception as error:
+        logging.error(f"Erro ao fazer login ou buscar e-mails: {error}")
+        return {
+            "error": "Ocorreu um erro ao processar a solicitação. Por favor, tente novamente mais tarde."
+        }, 500
+
 
 def is_valid_email(email):
+    """Verifica se um e-mail é válido."""
     email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
     return re.match(email_regex, email)
