@@ -8,6 +8,14 @@ class EmailExtractor:
     def __init__(self, email_text):
         self.email_text = email_text
 
+    def extract_date(self):
+        """Extrai a data do e-mail."""
+        date_regex = r'Date:\s*(.+)'
+        match = re.search(date_regex, self.email_text)
+        if match:
+            return match.group(1)
+        return None
+
     def extract_info(self):
         """Extrai informações do texto do e-mail."""
         # Expressões regulares para capturar as informações
@@ -26,6 +34,7 @@ class EmailExtractor:
             passengers = re.findall(passengers_regex, self.email_text)
             miles = re.search(miles_regex, self.email_text)
             taxes = re.search(taxes_regex, self.email_text)
+            date = self.extract_date()
 
             # Formatar os nomes dos passageiros
             formatted_passengers = [name.strip() for name in passengers]
@@ -46,7 +55,8 @@ class EmailExtractor:
                 'Destino': destination,
                 'Passageiros': concatenated_passengers,
                 'Milhas': miles,
-                'Taxas': taxes
+                'Taxas': taxes,
+                'Data': date
             }
         except Exception as error:
             logging.error(f"Erro ao extrair informações do e-mail: {error}")
