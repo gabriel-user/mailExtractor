@@ -1,5 +1,3 @@
-"""Módulo para extrair informações de um e-mail."""
-
 import re
 import logging
 

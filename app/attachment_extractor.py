@@ -1,5 +1,3 @@
-"""Módulo para extrair informações de um anexo de e-mail."""
-
 import re
 import logging
 from email import policy, parser
