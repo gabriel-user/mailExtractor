@@ -1,11 +1,17 @@
+"""Módulo para extrair informações de um e-mail."""
+
 import re
 import logging
 
+
 class EmailExtractor:
+    """Classe para extrair informações de um e-mail."""
+
     def __init__(self, email_text):
         self.email_text = email_text
 
     def extract_info(self):
+        """Extrai informações do texto do e-mail."""
         # Expressões regulares para capturar as informações
         locator_regex = r'Reserva\s+([A-Z0-9]+)\s+Realizada com Sucesso'
         origin_regex = r'Origem:\s*(\w+)'
@@ -44,6 +50,6 @@ class EmailExtractor:
                 'Milhas': miles,
                 'Taxas': taxes
             }
-        except Exception as e:
-            logging.error(f"Erro ao extrair informações do e-mail: {e}")
-            raise e
+        except Exception as error:
+            logging.error(f"Erro ao extrair informações do e-mail: {error}")
+            raise
