@@ -1,6 +1,7 @@
 import logging
 import re
 from io import BytesIO
+from flask import render_template
 
 from flask import render_template, request, send_file
 from imap_tools import MailBox, AND
@@ -71,3 +72,14 @@ def is_valid_email(email):
     """Verifica se um e-mail é válido."""
     email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
     return re.match(email_regex, email)
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('404.html'), 404
+
+app.logger.setLevel(logging.ERROR)
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    app.logger.error(f"Internal Server Error: {error}")
+    return render_template('500.html'), 500
