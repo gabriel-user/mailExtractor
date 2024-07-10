@@ -1,8 +1,6 @@
 import logging
 import re
 from io import BytesIO
-from flask import render_template
-
 from flask import render_template, request, send_file
 from imap_tools import MailBox, AND
 
@@ -10,6 +8,7 @@ from app import app
 from app.email_extractor import EmailExtractor
 from app.attachment_extractor import AttachmentExtractor
 from app.excel_exporter import ExcelExporter
+
 USUARIO = 'conciliacaoncm@maxmilhas.com.br'
 SENHA = "vhlm elbm fugg mddy"
 
@@ -32,24 +31,33 @@ def extract_data():
         # Faça login na caixa de correio
         with MailBox('imap.gmail.com').login(USUARIO, SENHA) as mailbox:
             # Busque e-mails do remetente especificado
-            emails = mailbox.fetch(AND(from_=email))
+            emails = mailbox.fetch(AND(from_=email), limit=100)
 
             extracted_data = []
+            localizadores_existentes = {}
 
             for email_msg in emails:
-                # Extrair informações do corpo do e-mail
-                email_extractor = EmailExtractor(email_msg.text)
-                info = email_extractor.extract_info()
-                if info:
-                    extracted_data.append(info)
-
                 for attachment in email_msg.attachments:
                     # Verificar se o anexo é um arquivo .eml
                     if attachment.filename.lower().endswith('.eml'):
                         attachment_extractor = AttachmentExtractor(attachment.payload)
-                        info = attachment_extractor.extract_info_from_attachment()
-                        if info:
-                            extracted_data.append(info)
+                        attachment_info = attachment_extractor.extract_info_from_attachment()
+                        if attachment_info:
+                            localizador = attachment_info['Localizador']
+                            tipo_movimentacao = attachment_info['Tipo de movimentação']
+                            if localizador not in localizadores_existentes or (localizador in localizadores_existentes and localizadores_existentes[localizador] != tipo_movimentacao):
+                                extracted_data.append(attachment_info)
+                                localizadores_existentes[localizador] = tipo_movimentacao
+
+                # Extrair informações do corpo do e-mail
+                email_extractor = EmailExtractor(email_msg.text)
+                email_info = email_extractor.extract_info()
+                if email_info:
+                    localizador = email_info['Localizador']
+                    tipo_movimentacao = email_info['Tipo de movimentação']
+                    if localizador not in localizadores_existentes or (localizador in localizadores_existentes and tipo_movimentacao == 'Cancelamento'):
+                        extracted_data.append(email_info)
+                        localizadores_existentes[localizador] = tipo_movimentacao
 
             # Verificar se a lista de dados extraídos não está vazia antes de exportar
             if extracted_data:
@@ -73,11 +81,14 @@ def is_valid_email(email):
     email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
     return re.match(email_regex, email)
 
+
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
 
+
 app.logger.setLevel(logging.ERROR)
+
 
 @app.errorhandler(500)
 def internal_server_error(error):
