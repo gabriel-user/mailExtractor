@@ -16,7 +16,7 @@ class ExcelExporter:
             sheet = workbook.active
 
             # Escrever os cabeçalhos na primeira linha
-            headers = ['Localizador', 'Origem', 'Destino', 'Passageiros', 'Milhas', 'Taxas']
+            headers = ['Localizador', 'Origem', 'Destino', 'Passageiros', 'Milhas', 'Taxas', 'Tipo de movimentação']
             sheet.append(headers)
 
             # Aplicar formatação aos cabeçalhos
@@ -34,7 +34,8 @@ class ExcelExporter:
                     item['Destino'],
                     item['Passageiros'],
                     item['Milhas'],
-                    item['Taxas']
+                    item['Taxas'],
+                    item['Tipo de movimentação']
                 ]
                 sheet.append(row)
 

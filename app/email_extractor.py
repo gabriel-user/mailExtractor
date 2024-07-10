@@ -40,13 +40,20 @@ class EmailExtractor:
             miles = miles.group(1) if miles else None
             taxes = taxes.group(1) if taxes else None
 
+            # Verificar se a frase "cancelada com sucesso" está presente no texto do e-mail
+            if "cancelada com sucesso" in self.email_text.lower():
+                tipo_movimentacao = "Cancelamento"
+            else:
+                tipo_movimentacao = "Emissão"
+
             return {
                 'Localizador': locator,
                 'Origem': origin,
                 'Destino': destination,
                 'Passageiros': concatenated_passengers,
                 'Milhas': miles,
-                'Taxas': taxes
+                'Taxas': taxes,
+                'Tipo de movimentação': tipo_movimentacao
             }
         except Exception as error:
             logging.error(f"Erro ao extrair informações do e-mail: {error}")

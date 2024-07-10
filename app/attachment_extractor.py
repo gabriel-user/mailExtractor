@@ -92,13 +92,20 @@ class AttachmentExtractor:
         if attachment_text:
             tarifa_total, taxas, localizador, origem, destino, passageiros = self.extract_values(attachment_text)
 
+            # Verificar se a frase "cancelada com sucesso" está presente no texto do anexo
+            if "cancelada com sucesso" in attachment_text.lower():
+                tipo_movimentacao = "Cancelamento"
+            else:
+                tipo_movimentacao = "Emissão"
+
             return {
                 'Localizador': localizador,
                 'Origem': origem,
                 'Destino': destino,
                 'Passageiros': ", ".join(passageiros),
                 'Milhas': tarifa_total,
-                'Taxas': taxas
+                'Taxas': taxas,
+                'Tipo de movimentação': tipo_movimentacao
             }
         else:
             return None

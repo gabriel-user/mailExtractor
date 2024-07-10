@@ -32,7 +32,7 @@ def extract_data():
         # Faça login na caixa de correio
         with MailBox('imap.gmail.com').login(USUARIO, SENHA) as mailbox:
             # Busque e-mails do remetente especificado
-            emails = mailbox.fetch(AND(from_=email, text="email@news-voeazul.com.br"), limit=100)
+            emails = mailbox.fetch(AND(from_=email))
 
             extracted_data = []
 
