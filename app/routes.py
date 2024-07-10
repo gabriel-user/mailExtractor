@@ -53,6 +53,7 @@ def extract_data():
                 email_extractor = EmailExtractor(email_msg.text)
                 email_info = email_extractor.extract_info()
                 if email_info:
+                    email_info['Data'] = email_msg.date.strftime('%d/%m/%Y')
                     localizador = email_info['Localizador']
                     tipo_movimentacao = email_info['Tipo de movimentação']
                     if localizador not in localizadores_existentes or (localizador in localizadores_existentes and tipo_movimentacao == 'Cancelamento'):
