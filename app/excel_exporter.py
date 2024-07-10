@@ -1,6 +1,6 @@
 import logging
 from openpyxl import Workbook
-from openpyxl.styles import Font, PatternFill
+from openpyxl.styles import Font, PatternFill, Alignment
 
 
 class ExcelExporter:
@@ -16,7 +16,7 @@ class ExcelExporter:
             sheet = workbook.active
 
             # Escrever os cabeçalhos na primeira linha
-            headers = ['Localizador', 'Origem', 'Destino', 'Passageiros', 'Milhas', 'Taxas']
+            headers = ['Localizador', 'Origem', 'Destino', 'Passageiros', 'Milhas', 'Taxas', 'Tipo de movimentação']
             sheet.append(headers)
 
             # Aplicar formatação aos cabeçalhos
@@ -34,7 +34,8 @@ class ExcelExporter:
                     item['Destino'],
                     item['Passageiros'],
                     item['Milhas'],
-                    item['Taxas']
+                    item['Taxas'],
+                    item['Tipo de movimentação']
                 ]
                 sheet.append(row)
 
@@ -43,6 +44,11 @@ class ExcelExporter:
                 for cell in row:
                     if cell.value:
                         cell.number_format = '#,##0.00'
+
+            # Centralizar todas as colunas
+            for column in sheet.columns:
+                for cell in column:
+                    cell.alignment = Alignment(horizontal='center')
 
             # Ajustar a largura das colunas automaticamente
             for column in sheet.columns:

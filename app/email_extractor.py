@@ -19,35 +19,46 @@ class EmailExtractor:
         taxes_regex = r'Taxas\s*R\$ (\d{1,3}(?:\.\d{3})*,\d{2})'
 
         try:
-            # Encontrar as informações no texto do e-mail
-            locator = re.search(locator_regex, self.email_text)
-            origin = re.search(origin_regex, self.email_text)
-            destination = re.search(destination_regex, self.email_text)
-            passengers = re.findall(passengers_regex, self.email_text)
-            miles = re.search(miles_regex, self.email_text)
-            taxes = re.search(taxes_regex, self.email_text)
+            # Verificar se o texto "Sua compra foi um sucesso!" ou "cancelada com sucesso." está presente no e-mail
+            if "Sua compra foi um sucesso!" in self.email_text or "cancelada com sucesso." in self.email_text:
+                # Encontrar as informações no texto do e-mail
+                locator = re.search(locator_regex, self.email_text)
+                origin = re.search(origin_regex, self.email_text)
+                destination = re.search(destination_regex, self.email_text)
+                passengers = re.findall(passengers_regex, self.email_text)
+                miles = re.search(miles_regex, self.email_text)
+                taxes = re.search(taxes_regex, self.email_text)
 
-            # Formatar os nomes dos passageiros
-            formatted_passengers = [name.strip() for name in passengers]
+                # Formatar os nomes dos passageiros
+                formatted_passengers = [name.strip() for name in passengers]
 
-            # Concatenar todos passageiros
-            concatenated_passengers = ", ".join(formatted_passengers)
+                # Concatenar todos passageiros
+                concatenated_passengers = ", ".join(formatted_passengers)
 
-            # Extrair os grupos encontrados ou None se não encontrado
-            locator = locator.group(1) if locator else None
-            origin = origin.group(1) if origin else None
-            destination = destination.group(1) if destination else None
-            miles = miles.group(1) if miles else None
-            taxes = taxes.group(1) if taxes else None
+                # Extrair os grupos encontrados ou None se não encontrado
+                locator = locator.group(1) if locator else None
+                origin = origin.group(1) if origin else None
+                destination = destination.group(1) if destination else None
+                miles = miles.group(1) if miles else None
+                taxes = taxes.group(1) if taxes else None
 
-            return {
-                'Localizador': locator,
-                'Origem': origin,
-                'Destino': destination,
-                'Passageiros': concatenated_passengers,
-                'Milhas': miles,
-                'Taxas': taxes
-            }
+                # Verificar se a frase "cancelada com sucesso" está presente no texto do e-mail
+                if "cancelada com sucesso" in self.email_text.lower():
+                    tipo_movimentacao = "Cancelamento"
+                else:
+                    tipo_movimentacao = "Emissão"
+
+                return {
+                    'Localizador': locator,
+                    'Origem': origin,
+                    'Destino': destination,
+                    'Passageiros': concatenated_passengers,
+                    'Milhas': miles,
+                    'Taxas': taxes,
+                    'Tipo de movimentação': tipo_movimentacao
+                }
+            else:
+                return None
         except Exception as error:
             logging.error(f"Erro ao extrair informações do e-mail: {error}")
             raise
