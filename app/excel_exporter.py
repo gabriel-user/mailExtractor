@@ -16,7 +16,7 @@ class ExcelExporter:
             sheet = workbook.active
 
             # Escrever os cabeçalhos na primeira linha
-            headers = ['Localizador', 'Origem', 'Destino', 'Passageiros', 'Milhas', 'Taxas', 'Tipo de movimentação']
+            headers = ['Data', 'Localizador', 'Origem', 'Destino', 'Passageiros', 'Milhas', 'Taxas', 'Tipo de movimentação']
             sheet.append(headers)
 
             # Aplicar formatação aos cabeçalhos
@@ -29,6 +29,7 @@ class ExcelExporter:
             # Escrever os dados nas linhas subsequentes
             for item in self.data:
                 row = [
+                    item.get('Data', ''),
                     item['Localizador'],
                     item['Origem'],
                     item['Destino'],
@@ -40,7 +41,7 @@ class ExcelExporter:
                 sheet.append(row)
 
             # Aplicar formatação condicional às células
-            for row in sheet.iter_rows(min_row=2, min_col=5, max_col=6):
+            for row in sheet.iter_rows(min_row=2, min_col=6, max_col=7):
                 for cell in row:
                     if cell.value:
                         cell.number_format = '#,##0.00'

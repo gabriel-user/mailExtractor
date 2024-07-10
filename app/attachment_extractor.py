@@ -2,6 +2,7 @@ import re
 import logging
 from email import policy, parser
 from bs4 import BeautifulSoup
+from datetime import datetime
 
 
 class AttachmentExtractor:
@@ -14,25 +15,7 @@ class AttachmentExtractor:
         """Extrai o texto do anexo de e-mail."""
         try:
             msg = parser.BytesParser(policy=policy.default).parsebytes(self.attachment)
-
-            # Verifica se é multipart para iterar nas partes
-            if msg.is_multipart():
-                for part in msg.iter_parts():
-                    # Verifica se é texto e procura o campo de subject
-                    if part.get_content_type() in ('text/plain', 'text/html'):
-                        payload = part.get_payload(decode=True)
-                        # Aqui você pode verificar a presença do campo de subject
-                        # Por exemplo, se estiver em HTML, procure por "<title>" ou "<subject>"
-                        # Ou em text/plain por "Subject:"
-                        return payload.decode('utf-8', errors='ignore')
-            else:
-                return msg.get_payload(decode=True).decode('utf-8', errors='ignore')
-        except AttributeError as error:
-            logging.error(f"Erro ao extrair texto do anexo (AttributeError): {error}")
-            return None
-        except LookupError as error:
-            logging.error(f"Erro ao extrair texto do anexo (LookupError): {error}")
-            return None
+            return msg.get_payload(decode=True).decode('utf-8', errors='ignore')
         except Exception as error:
             logging.error(f"Erro ao extrair texto do anexo: {error}")
             return None
@@ -76,12 +59,6 @@ class AttachmentExtractor:
                 localizador = match.group(1)
 
             return tarifa_total, taxas, localizador, origem, destino, passageiros
-        except AttributeError as error:
-            logging.error(f"Erro ao extrair valores do anexo (AttributeError): {error}")
-            return None, None, None, None, None, None
-        except TypeError as error:
-            logging.error(f"Erro ao extrair valores do anexo (TypeError): {error}")
-            return None, None, None, None, None, None
         except Exception as error:
             logging.error(f"Erro ao extrair valores do anexo: {error}")
             return None, None, None, None, None, None
@@ -98,7 +75,13 @@ class AttachmentExtractor:
             else:
                 tipo_movimentacao = "Emissão"
 
+            # Extrair a data de recebimento do e-mail
+            msg = parser.BytesParser(policy=policy.default).parsebytes(self.attachment)
+            data_recebimento = msg['Date']
+            data_recebimento = datetime.strptime(data_recebimento, '%a, %d %b %Y %H:%M:%S %z').strftime('%d/%m/%Y')
+
             return {
+                'Data': data_recebimento,
                 'Localizador': localizador,
                 'Origem': origem,
                 'Destino': destino,
